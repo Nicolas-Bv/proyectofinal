@@ -5,7 +5,7 @@ use App\Entidades\Pedido;
 use App\Entidades\Sucursal;
 use App\Entidades\Estado;
 use App\Entidades\Cliente;
-use App\Entidades\Pedido_productos;
+use App\Entidades\Producto;
 use Illuminate\Http\Request;
 require app_path()."/start/constants.php";
 
@@ -23,12 +23,12 @@ Class Controladorpedido extends Controller
             $cliente= new Cliente();
             $aClientes= $cliente->obtenerTodos();
 
-            $pedidoProducto= new PedidoProducto();
-            $aPedidoProductos= $pedidoProducto->obtenerTodos();
-
             $estado= new Estado();
             $aEstados= $estado->obtenerTodos();
-            return view("sistema.pedido-nuevo", compact("titulo", "aSucursales", "aEstados", "aClientes", "aPedidoProductos")); //le digo que vaya a buscar el html blade
+
+            $producto= new Producto();
+            $aProductos=$producto->obtenerTodos();
+            return view("sistema.pedido-nuevo", compact("titulo", "pedido", "aSucursales", "aEstados", "aClientes", "aProductos")); //le digo que vaya a buscar el html blade
 
       }
 
@@ -79,7 +79,19 @@ Class Controladorpedido extends Controller
         $pedido = new Pedido();
         $pedido->obtenerPorId($id);
 
-        return view('sistema.pedido-nuevo', compact('msg', 'pedido', 'titulo')) . '?id=' . $pedido->idpedido;
+        $sucursal= new Sucursal();
+        $aSucursales= $sucursal->obtenerTodos();
+
+        $cliente= new Cliente();
+        $aClientes= $cliente->obtenerTodos();
+
+        $estado= new Estado();
+        $aEstados= $estado->obtenerTodos();
+
+        $producto= new Producto();
+        $aProductos->obtenerTodos();
+
+        return view('sistema.pedido-nuevo', compact('msg', 'pedido', 'titulo', "aSucursales", "aClientes", "aEstados", "aProductos")) . '?id=' . $pedido->idpedido;
 
       
 }
@@ -123,6 +135,19 @@ public function cargarGrilla(Request $request)
         $titulo="Edición de pedido";
         $pedido= new Pedido();
         $pedido->obtenerPorId($idpedido);
-        return view("sistema.pedido-nuevo", compact("titulo","pedido"));
+
+        $sucursal= new Sucursal();
+        $aSucursales= $sucursal->obtenerTodos();
+
+        $cliente= new Cliente();
+        $aClientes= $cliente->obtenerTodos();
+
+        $estado= new Estado();
+        $aEstados= $estado->obtenerTodos();
+
+        $producto= new Producto();
+        $aProductos->obtenerTodos();
+
+        return view("sistema.pedido-nuevo", compact("titulo","pedido", "aSucursales", "aClientes", "aEstados", "aProductos"));
     }
 }

@@ -81,7 +81,7 @@
                 <select name="lstProducto" id="lstProducto" class="form-control">
                     <option value="" selected>Seleccionar</option>
                 @foreach($aProductos as $producto)
-                    <option value="{{$producto->idproducto}}">{{$producto->nombre}}</option>
+                    <option value="{{$producto->idproducto}}">{{$producto->titulo}}</option>
                     @endforeach
                 </select>
             </div>

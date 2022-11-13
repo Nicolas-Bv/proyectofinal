@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 use App\Entidades\Cliente;
+use App\Entidades\Pedido;
 use Illuminate\Http\Request;
 require app_path() . '/start/constants.php';
 
@@ -104,6 +105,27 @@ public function cargarGrilla(Request $request)
         $cliente= new Cliente();
         $cliente->obtenerPorId($idCliente);
         return view("sistema.cliente-nuevo", compact("titulo","cliente"));
+    }
+
+    public function eliminar(Request $request){
+        $idCliente=$request->input("id");
+        $pedido= new Pedido;
+
+        //si el cliente tiene un pedido no elimina
+
+        if($pedido->existePedidoCliente($idCliente)){
+            $resultado["err"]= EXIT_FAILURE;
+            $resultado["mensaje"]="Cliente con pedidos asignados.";
+        }else {
+
+        //sino si
+        $cliente= new Cliente;
+        $cliente->idcliente= $idCliente;
+        $cliente->eliminar();
+        $resultado["err"]= EXIT_SUCCESS;
+        $resultado["mensaje"]="Registro eliminado exitosamente.";
+        }
+        return json_encode($resultado);
     }
 }
 
