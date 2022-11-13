@@ -43,7 +43,7 @@ class Pedido extends Model
                 fk_idestado,
                 fk_idcliente,
                 idpedido
-                  FROM pedido WHERE idpedido = $idPedido";
+                  FROM pedidos WHERE idpedido = $idPedido";
           $lstRetorno = DB::select($sql);
   
           if (count($lstRetorno) > 0) {
@@ -64,7 +64,7 @@ class Pedido extends Model
               total=$this->total,
               fk_idsucursal=$this->fk_idsucursal,
               fk_idcliente=$this->fk_idcliente,
-              fk_idestado='$this->fk_idestado',
+              fk_idestado='$this->fk_idestado'
               WHERE idpedido=?";
           $affected = DB::update($sql, [$this->idpedido]);
       }
@@ -83,17 +83,18 @@ class Pedido extends Model
                 total,
                 fk_idsucursal,
                 fk_idestado,
-                fk_idcliente,
+                fk_idcliente
               ) VALUES (?, ?, ?, ?, ?);";
           $result = DB::insert($sql, [
               $this->fecha,
               $this->total,
               $this->fk_idsucursal,
               $this->fk_idcliente,
-              $this->fk_idestado,
+              $this->fk_idestado
           ]);
           return $this->idpedido = DB::getPdo()->lastInsertId();
       }
+
 }
 
 ?>

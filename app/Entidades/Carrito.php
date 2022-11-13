@@ -19,6 +19,13 @@ class Carrito extends Model
   
   ];
   
+  public function cargarDesdeRequest($request)
+    {
+        $this->idcarrito = $request->input('id') != "0" ? $request->input('id') : $this->idcarrito;
+        $this->fk_idcliente = $request->input('fk_idcliente');
+        $this->fk_idproducto = $request->input('fk_idproducto');
+    
+    }
   
   public function obtenerTodos()
   {
@@ -71,7 +78,7 @@ class Carrito extends Model
                 fk_idproducto
               ) VALUES (?, ?);";
           $result = DB::insert($sql, [
-              $this->fk_idcliente,
+              $this->fk_idcliente
           ]);
           return $this->idcarrito = DB::getPdo()->lastInsertId();
       }

@@ -9,14 +9,13 @@
 
 @section('breadcrumb')
 <ol class="breadcrumb">
-    <li class="breadcrumb-item"><a href="/admin/home">Inicio</a></li>
-    <li class="breadcrumb-item"><a href="/admin/sistema/producto">Producto</a></li>
+    <li class="breadcrumb-item"><a href="/admin/sistema/home">Inicio</a></li>
+    <li class="breadcrumb-item"><a href="/admin/productos">Producto</a></li>
     <li class="breadcrumb-item active">Modificar</li>
 </ol>
 <ol class="toolbar">
-    <li class="btn-item"><a title="Nuevo" href="/admin/sistema/producto/nuevo" class="fa fa-plus-circle" aria-hidden="true"><span>Nuevo</span></a></li>
-    <li class="btn-item"><a title="Guardar" href="#" class="fa fa-floppy-o" aria-hidden="true" onclick="javascript: $('#modalGuardar').modal('toggle');"><span>Guardar</span></a>
-    </li>
+    <li class="btn-item"><a title="Nuevo" href="/admin/producto/nuevo" class="fa fa-plus-circle" aria-hidden="true"><span>Nuevo</span></a></li>
+    <li class="btn-item"><a title="Guardar" href="#" class="fa fa-floppy-o" aria-hidden="true" onclick="javascript: $('#modalGuardar').modal('toggle');"><span>Guardar</span></a></li>
     @if($globalId > 0)
     <li class="btn-item"><a title="Guardar" href="#" class="fa fa-trash-o" aria-hidden="true" onclick="javascript: $('#mdlEliminar').modal('toggle');"><span>Eliminar</span></a></li>
     @endif
@@ -24,7 +23,7 @@
 </ol>
 <script>
     function fsalir() {
-        location.href = "/admin/sistema/producto";
+        location.href = "/admin/sistema/menu";
     }
 </script>
 @endsection
@@ -44,35 +43,53 @@
             <input type="hidden" id="id" name="id" class="form-control" value="{{$globalId}}" required>
             <div class="form-group col-lg-6">
                 <label>Nombre: *</label>
-                <input type="text" id="txtNombre" name="txtNombre" class="form-control" value="" required>
+                <input type="text" id="txtTitulo" name="txtTitulo" class="form-control" value="" required>
             </div>
             <div class="form-group col-lg-6">
                 <label>Categoría: *</label>
-                <select name="lstCategoría" id="lstCategoría" class="form-control">
+                <select name="lstCategoria" id="lstCategoria" class="form-control" required>
                     <option value="Seleccionar" select>Seleccionar</option>
-                    <option value=""></option>
-                    <option value=""></option>
-                    <option value=""></option>
+                    @foreach($aCategorias as $categoria)
+                    <option value="{{$categoria->idcategoria}}">{{$categoria->nombre}}</option>
+                    @endforeach
                 </select>
-         </div>
+            </div>
         </div>
         <div class="row">
             <div class="form-group col-lg-6">
                 <label>Cantidad: *</label>
-                <input type="number" id="txtCantidad" name="txtCantidad" class="form-control" value="" required>
+                <input type="text" id="txtCantidad" name="txtCantidad" class="form-control" value="" required>
             </div>
             <div class="form-group col-lg-6">
                 <label>Precio: *</label>
-                <input type="number" id="txtTotal" name="txtTotal" class="form-control" required>
+                <input type="text" id="txtPrecio" name="txtPrecio" class="form-control" required>
             </div>
         </div>
         <div class="row">
             <div class="form-group col-lg-6">
+                <label>Descripción: *</label>
+                <textarea name="txtDescripcion" id="txtDescripcion" class="form-control"></textarea>
+            </div>
+            <div class="form-group col-lg-6">
                 <label>Imagen: *</label><br>
-                 <input type="file" name="image">
+                <input type="file" name="image">
             </div>
         </div>
     </form>
 </div>
 
 @endsection
+<script>
+    $("#form1").validate();
+
+    function guardar() {
+        if ($("#form1").valid()) {
+            modificado = false;
+            form1.submit();
+        } else {
+            $("#modalGuardar").modal('toggle');
+            msgShow("Corrija los errores e intente nuevamente.", "danger");
+            return false;
+        }
+    }
+</script>

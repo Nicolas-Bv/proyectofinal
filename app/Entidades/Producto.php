@@ -10,13 +10,24 @@ class Producto extends Model
     public $timestamps = false;
 
     protected $fillable = [
-        'titulo','cantidad','precio', 'descripcion','imagen','idproducto','fk_idtipoproducto'
+        'titulo','cantidad','precio', 'descripcion','imagen','idproducto','fk_idcategoria'
     ];
     
     
     protected $hidden = [
 
 ];
+
+public function cargarDesdeRequest($request)
+    {
+        $this->idproducto = $request->input('id') != "0" ? $request->input('id') : $this->idproducto;
+        $this->titulo = $request->input('txtTitulo');
+        $this->cantidad = $request->input('txtCantidad');
+        $this->precio = $request->input('txtPrecio');
+        $this->fk_idcategoria = $request->input('lstCategoria');
+        $this->descripcion = $request->input('txtDescripcion');
+    }
+
 
 
 public function obtenerTodos()
@@ -25,10 +36,10 @@ public function obtenerTodos()
               titulo,
               cantidad,
               precio,
-              descipcion,
+              descripcion,
               imagen,
               idproducto,
-              fk_idtipoproducto
+              fk_idcategoria
             FROM productos ORDER BY titulo ASC";
     $lstRetorno = DB::select($sql);
     return $lstRetorno;
@@ -40,10 +51,10 @@ public function obtenerPorId($idproducto)
               titulo,
               cantidad,
               precio,
-              descipcion,
+              descripcion,
               imagen,
               idproducto,
-              fk_idtipoproducto
+              fk_idcategoria
                 FROM productos WHERE idproducto = $idproducto";
         $lstRetorno = DB::select($sql);
 
@@ -54,23 +65,23 @@ public function obtenerPorId($idproducto)
             $this->descripcion = $lstRetorno[0]->descripcion;
             $this->imagen = $lstRetorno[0]->imagen;
             $this->idproducto = $lstRetorno[0]->idproducto;
-            $this->fk_idtipoproducto = $lstRetorno[0]->fk_idtipoproducto;
+            $this->fk_idcategoria = $lstRetorno[0]->fk_idcategoria;
             return $this;
         }
         return null;
     }
 
-    public function obtenerPorTipo($idTipoProducto)
+    public function obtenerPorTipo($idCategoria)
 {
     $sql = "SELECT
               titulo,
               cantidad,
               precio,
-              descipcion,
+              descripcion,
               imagen,
               idproducto,
-              fk_idtipoproducto
-            FROM productos WHERE fk_idtipoproducto  = $idTipoProducto";
+              fk_idcategoria
+            FROM productos WHERE fk_idcategoria  = $idCategoria";
     $lstRetorno = DB::select($sql);
     return $lstRetorno;
 }
@@ -82,8 +93,8 @@ public function obtenerPorId($idproducto)
             precio=$this->precio,
             descripcion='$this->descripcion',
             imagen='$this->imagen',
-            fk_idtipoproducto=$this->fk_idtipoproducto
-            WHERE idmenu=?";
+            fk_idcategoria=$this->fk_idcategoria
+            WHERE idproducto=?";
         $affected = DB::update($sql, [$this->idproducto]);
     }
 
@@ -102,7 +113,7 @@ public function obtenerPorId($idproducto)
                 precio,
                 descripcion,
                 imagen,
-                fk_idtipoproducto
+                fk_idcategoria
             ) VALUES (?, ?, ?, ?, ?, ?);";
         $result = DB::insert($sql, [
             $this->titulo,
@@ -110,10 +121,44 @@ public function obtenerPorId($idproducto)
             $this->precio,
             $this->descripcion,
             $this->imagen,
-            $this->fk_idtipoproducto,
+            $this->fk_idcategoria
         ]);
         return $this->idproducto = DB::getPdo()->lastInsertId();
     }
+
+    public function obtenerFiltrado()
+    {
+        $request = $_REQUEST;
+        $columns = array(
+            0 => 'titulo',
+            1 => 'cantidad',
+            2 => 'precio',
+        );
+        $sql = "SELECT DISTINCT
+                idproducto,
+                titulo,
+                cantidad,
+                precio
+              FROM productos
+                WHERE 1=1
+                ";
+
+        //Realiza el filtrado
+        if (!empty($request['search']['value'])) {
+            $sql .= " AND ( titulo LIKE '%" . $request['search']['value'] . "%' ";
+            $sql .= " OR cantidad LIKE '%" . $request['search']['value'] . "%' ";
+            $sql .= " OR precio LIKE '%" . $request['search']['value'] . "%' ";
+        }
+        $sql .= " ORDER BY " . $columns[$request['order'][0]['column']] . "   " . $request['order'][0]['dir'];
+
+        $lstRetorno = DB::select($sql);
+
+        return $lstRetorno;
+    }
+
+    
+  
+
 
 }
 

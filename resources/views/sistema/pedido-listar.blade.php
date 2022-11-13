@@ -7,11 +7,11 @@
 @section('breadcrumb')
 <ol class="breadcrumb">
     <li class="breadcrumb-item"><a href="/home">Inicio</a></li>
-    <li class="breadcrumb-item active">Clientes</a></li>
+    <li class="breadcrumb-item active">Pedidos</a></li>
 </ol>
 <ol class="toolbar">
-    <li class="btn-item"><a title="Nuevo" href="/admin/cliente/nuevo" class="fa fa-plus-circle" aria-hidden="true"><span>Nuevo</span></a></li>
-    <li class="btn-item"><a title="Recargar" href="#" class="fa fa-refresh" aria-hidden="true" onclick='window.location.replace("/admin/clientes");'><span>Recargar</span></a></li>
+    <li class="btn-item"><a title="Nuevo" href="/admin/pedido/nuevo" class="fa fa-plus-circle" aria-hidden="true"><span>Nuevo</span></a></li>
+    <li class="btn-item"><a title="Recargar" href="#" class="fa fa-refresh" aria-hidden="true" onclick='window.location.replace("/admin/pedidos");'><span>Recargar</span></a></li>
 </ol>
 @endsection
 @section('contenido')
@@ -24,11 +24,11 @@ if (isset($msg)) {
 <table id="grilla" class="display">
     <thead>
         <tr>
-            <th>Nombre</th>
-            <th>Direccion</th>
-            <th>Celular</th>
-            <th>Dni</th>
-            <th>Correo</th>
+            <th>Fecha</th>
+            <th>Sucursal</th>
+            <th>Cliente</th>
+            <th>Estado</th>
+            <th>Total</th>
         </tr>
     </thead>
 </table> 
@@ -41,7 +41,7 @@ if (isset($msg)) {
 	    "bSearchable": true,
         "pageLength": 25,
         "order": [[ 0, "asc" ]],
-	    "ajax": "{{ route('cliente.cargarGrilla') }}"
+	    "ajax": "{{ route('pedido.cargarGrilla') }}"
 	});
 </script>
 @endsection

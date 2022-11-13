@@ -10,11 +10,11 @@
 @section('breadcrumb')
 <ol class="breadcrumb">
     <li class="breadcrumb-item"><a href="/admin/home">Inicio</a></li>
-    <li class="breadcrumb-item"><a href="/admin/sistema/sucursal">Sucursal</a></li>
+    <li class="breadcrumb-item"><a href="/admin/sucursales">Sucursales</a></li>
     <li class="breadcrumb-item active">Modificar</li>
 </ol>
 <ol class="toolbar">
-    <li class="btn-item"><a title="Nuevo" href="/admin/sistema/sucursal/nuevo" class="fa fa-plus-circle" aria-hidden="true"><span>Nuevo</span></a></li>
+    <li class="btn-item"><a title="Nuevo" href="/admin/sucursal/nuevo" class="fa fa-plus-circle" aria-hidden="true"><span>Nuevo</span></a></li>
     <li class="btn-item"><a title="Guardar" href="#" class="fa fa-floppy-o" aria-hidden="true" onclick="javascript: $('#modalGuardar').modal('toggle');"><span>Guardar</span></a>
     </li>
     @if($globalId > 0)
@@ -24,7 +24,7 @@
 </ol>
 <script>
     function fsalir() {
-        location.href = "/admin/sistema/sucursal";
+        location.href = "/admin/sistema/menu";
     }
 </script>
 @endsection
@@ -53,20 +53,36 @@
         <div class="row">
             <div class="form-group col-lg-6">
                 <label>Teléfono: *</label>
-                <input type="number" id="txtTelefono" name="txtTelefono" class="form-control" value="" required>
+                <input type="text" id="txtTelefono" name="txtTelefono" class="form-control" value="" required>
             </div>
             <div class="form-group col-lg-6">
-                <label>Link: *</label>
-                <input type="text" id="txtLink" name="txtLink" class="form-control" value="" required>
+                <label>Link Mapa: *</label>
+                <input type="text" id="txtLinkmapa" name="txtLinkmapa" class="form-control" value="">
             </div>
         </div>
         <div class="row">
             <div class="form-group col-lg-6">
                 <label>Horario: *</label>
-                <input type="text" id="txtHorario" name="txtHoriario" class="form-control" value="" required>
+                <input type="text" id="txtHorario" name="txtHorario" class="form-control" value="" required>
             </div>
         </div>
     </form>
 </div>
 
+
+
+<script>
+    $("#form1").validate();
+
+    function guardar() {
+        if ($("#form1").valid()) {
+            modificado = false;
+            form1.submit();
+        } else {
+            $("#modalGuardar").modal('toggle');
+            msgShow("Corrija los errores e intente nuevamente.", "danger");
+            return false;
+        }
+    }
+</script>
 @endsection

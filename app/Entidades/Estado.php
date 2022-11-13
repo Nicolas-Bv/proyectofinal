@@ -4,7 +4,7 @@ namespace App\Entidades;
 use DB;
 use Illuminate\Database\Eloquent\Model;
 
-class Estados extends Model
+class Estado extends Model
 {
 
       protected $table = 'Estados';
@@ -18,6 +18,12 @@ class Estados extends Model
       protected $hidden = [
   
   ];
+
+  public function cargarDesdeRequest($request)
+    {
+        $this->idEstado = $request->input('id') != "0" ? $request->input('id') : $this->idEstado;
+        $this->nombre = $request->input('txtNombre');
+    }
   
   
   public function obtenerTodos()
@@ -35,7 +41,7 @@ class Estados extends Model
           $sql = "SELECT
                 idestado,
                 nombre
-                  FROM carritos WHERE idtipoproducto = $idEstados";
+                  FROM estados WHERE idestado = $idEstados";
           $lstRetorno = DB::select($sql);
   
           if (count($lstRetorno) > 0) {
@@ -47,7 +53,7 @@ class Estados extends Model
       }
   
       public function guardar() {
-          $sql = "UPDATE tipo_productos SET
+          $sql = "UPDATE estados SET
               nombre='$this->nombre'
               WHERE idestado=?";
           $affected = DB::update($sql, [$this->idestado]);
@@ -55,7 +61,7 @@ class Estados extends Model
   
       public function eliminar()
       {
-          $sql = "DELETE FROM tipo_productos WHERE
+          $sql = "DELETE FROM estados WHERE
               idestado=?";
           $affected = DB::delete($sql, [$this->idestado]);
       }
