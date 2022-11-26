@@ -43,21 +43,21 @@
             <input type="hidden" id="id" name="id" class="form-control" value="{{$globalId}}" required>
             <div class="form-group col-lg-6">
                 <label>Nombre: *</label>
-                <input type="text" id="txtNombre" name="txtNombre" class="form-control" value="" required>
+                <input type="text" id="txtNombre" name="txtNombre" class="form-control" value="{{$postulacion->nombre}}" required>
             </div>
             <div class="form-group col-lg-6">
                 <label>Apellido: *</label>
-                <input type="text" id="txtApellido" name="txtApellido" class="form-control" value="" required>
+                <input type="text" id="txtApellido" name="txtApellido" class="form-control" value="{{$postulacion->apellido}}" required>
             </div>
         </div>
         <div class="row">
             <div class="form-group col-lg-6">
                 <label>Celular: *</label>
-                <input type="text" id="txtCelular" name="txtCelular" class="form-control" value="" required>
+                <input type="text" id="txtCelular" name="txtCelular" class="form-control" value="{{$postulacion->celular}}" required>
             </div>
             <div class="form-group col-lg-6">
                 <label>Correo: *</label>
-                <input type="email" id="txtCorreo" name="txtCorreo" class="form-control" value="" required>
+                <input type="email" id="txtCorreo" name="txtCorreo" class="form-control" value="{{$postulacion->correo}}" required>
             </div>
         </div>
         <div class="row">
@@ -82,6 +82,30 @@
             msgShow("Corrija los errores e intente nuevamente.", "danger");
             return false;
         }
+    }
+
+    
+    function eliminar() {
+        $.ajax({
+            type: "GET",
+            url: "{{ asset('admin/postulacion/eliminar') }}",
+            data: {
+                id: globalId
+            },
+            async: true,
+            dataType: "json",
+            success: function(data) {
+                if (data.err = 0) {
+                    msgShow(data.mensaje, "success");
+                    $("#btnEnviar").hide();
+                    $("#btnEliminar").hide();
+                    $('#mdlEliminar').modal('toggle');
+                } else {
+                    msgShow(data.mensaje, "success");
+                    $('#mdlEliminar').modal('toggle');
+                }
+            }
+        });
     }
 </script>
 

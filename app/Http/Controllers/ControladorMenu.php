@@ -18,7 +18,7 @@ class ControladorMenu extends Controller
         if (Usuario::autenticado() == true) {
             if (!Patente::autorizarOperacion("MENUCONSULTA")) {
                 $codigo = "MENUCONSULTA";
-                $mensaje = "No tiene permisos para la operaci&oacute;n.";
+                $mensaje = "No tiene permisos para la operación.";
                 return view('sistema.pagina-error', compact('titulo', 'codigo', 'mensaje'));
             } else {
                 return view('sistema.menu-listar', compact('titulo'));
@@ -63,14 +63,24 @@ class ControladorMenu extends Controller
 
     public function nuevo()
     {
-        $titulo = "Nuevo Menú";
-        $menu = new Menu();
-        $array_menu = $menu->obtenerMenuPadre();
-        return view('sistema.menu-nuevo', compact('menu', 'titulo', 'array_menu'));
 
+        if (Usuario::autenticado() == true) {
+            if (!Patente::autorizarOperacion("MENUALTA")) {
+                $codigo = "MENUALTA";
+                $mensaje = "No tiene permisos para la operación.";
+                return view('sistema.pagina-error', compact('titulo', 'codigo', 'mensaje'));
+            } else {
+                $titulo = "Nuevo Menú";
+                $menu = new Menu();
+                $array_menu = $menu->obtenerMenuPadre();
+                return view('sistema.menu-nuevo', compact('menu', 'titulo', 'array_menu'));
+            }
+        } else {
+            return redirect('admin/login');
+        }
     }
 
-    
+
     public function editar($id)
     {
         $titulo = "Modificar Menú";
@@ -122,7 +132,8 @@ class ControladorMenu extends Controller
         }
     }
 
-    public function guardar(Request $request) {
+    public function guardar(Request $request)
+    {
         try {
             //Define la entidad servicio
             $titulo = "Modificar menú";
@@ -175,6 +186,5 @@ class ControladorMenu extends Controller
         $array_menu_grupo = $menu_grupo->obtenerPorMenu($id);
 
         return view('sistema.menu-nuevo', compact('msg', 'menu', 'titulo', 'array_menu', 'array_menu_grupo')) . '?id=' . $menu->idmenu;
-
     }
 }

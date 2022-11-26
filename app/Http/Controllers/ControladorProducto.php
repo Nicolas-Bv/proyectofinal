@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 use App\Entidades\Producto;
+use App\Entidades\Pedido;
 use App\Entidades\Categoria;
 use Illuminate\Http\Request;
 require app_path()."/start/constants.php";
@@ -119,4 +120,26 @@ public function cargarGrilla(Request $request)
 
         return view("sistema.producto-nuevo", compact("titulo","producto", "aCategorias"));
     }
+
+    public function eliminar(Request $request){
+        $idProducto=$request->input("id");
+        $pedido= new Pedido;
+
+        //si el cliente tiene un pedido no elimina
+
+        if($pedido->existePedidoProducto($idProducto)){
+            $resultado["err"]= EXIT_FAILURE;
+            $resultado["mensaje"]="Producto con pedido asignado.";
+        }else {
+
+        //sino si
+        $producto= new Producto;
+        $producto->idproducto= $idProducto;
+        $producto->eliminar();
+        $resultado["err"]= EXIT_SUCCESS;
+        $resultado["mensaje"]="Registro eliminado exitosamente.";
+        }
+        return json_encode($resultado);
+    }
+
 }

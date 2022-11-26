@@ -43,7 +43,7 @@
             <input type="hidden" id="id" name="id" class="form-control" value="{{$globalId}}" required>
             <div class="form-group col-lg-6">
                 <label>Fecha: *</label>
-                <input type="datetime" id="txtFecha" name="txtFecha" class="form-control" value="<?php echo date("d-m-Y h:i:s a");?>" >
+                <input type="date" id="txtFecha" name="txtFecha" class="form-control" value="{{$pedido->fecha}}" >
             </div>
             <div class="form-group col-lg-6">
                 <label>Sucursal: *</label>

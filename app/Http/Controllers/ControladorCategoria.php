@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers;
 use App\Entidades\Categoria;
+use App\Entidades\Pedido;
+use App\Entidades\Sistema\Patente;
+use App\Entidades\Sistema\Usuario;
 use Illuminate\Http\Request;
 require app_path() . '/start/constants.php';
 
@@ -10,9 +13,21 @@ Class ControladorCategoria extends Controller
       public function nuevo(){
 
             $titulo= "Nueva categoria";
-            $categoria= new Categoria();
-            return view("sistema.categoria-nuevo", compact("titulo", "categoria")); //le digo que vaya a buscar el html blade
 
+            
+        if (Usuario::autenticado() == true) {
+            if (!Patente::autorizarOperacion("CATEGORIAALTA")) {
+                $codigo = "CATEGORIAALTA";
+                $mensaje = "No tiene permisos para la operación.";
+                return view('sistema.pagina-error', compact('titulo', 'codigo', 'mensaje'));
+            } else {
+                $categoria= new Categoria();
+                return view("sistema.categoria-nuevo", compact("titulo", "categoria")); //le digo que vaya a buscar el html blade
+     }
+        } else {
+            return redirect('admin/login');
+        }
+        
       }
 
       public function index(){
@@ -100,5 +115,39 @@ public function cargarGrilla(Request $request)
         $categoria= new Categoria();
         $categoria->obtenerPorId($idcategoria);
         return view("sistema.categoria-nuevo", compact("titulo","categoria"));
+    }
+
+    public function eliminar(Request $request)
+    {
+
+        if (Usuario::autenticado() == true) {
+            if (!Patente::autorizarOperacion("CATEGORIAELIMINAR")) {
+                $resultado["err"] = EXIT_FAILURE;
+                $resultado["mensaje"] = "No tiene permisos para la operación";
+            } else {
+
+                $idCategoria = $request->input("id");
+                $pedido = new Pedido;
+
+                //si el Categoria tiene un pedido no elimina
+
+                if ($pedido->existePedidoCategoria($idCategoria)) {
+                    $resultado["err"] = EXIT_FAILURE;
+                    $resultado["mensaje"] = "Categoria con pedidos asignados.";
+                } else {
+
+                    //sino si
+                    $categoria = new Categoria();
+                    $categoria->idcategoria = $idCategoria;
+                    $categoria->eliminar();
+                    $resultado["err"] = EXIT_SUCCESS;
+                    $resultado["mensaje"] = "Registro eliminado exitosamente.";
+                }
+                return json_encode($resultado);
+            }
+        } else {
+            $resultado["err"] = EXIT_FAILURE;
+            $resultado["mensaje"] = "No tiene permisos para la operación";
+        }
     }
 }

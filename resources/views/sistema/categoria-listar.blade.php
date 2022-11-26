@@ -23,6 +23,7 @@ if (isset($msg)) {
         <tr>
             <th>Nombre</th>
         </tr>
+       
     </thead>
 </table> 
 

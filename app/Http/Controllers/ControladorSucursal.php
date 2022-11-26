@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 use App\Entidades\Sucursal;
+use App\Entidades\Sistema\Usuario;
+use App\Entidades\Sistema\Patente;
 use Illuminate\Http\Request;
 require app_path() . '/start/constants.php';
 
@@ -10,14 +12,38 @@ Class ControladorSucursal extends Controller
       public function nuevo(){
 
             $titulo= "Nueva Sucursal";
-            $sucursal= new Sucursal();
-            return view("sistema.sucursal-nuevo", compact("titulo", "sucursal")); //le digo que vaya a buscar el html blade
+
+            if (Usuario::autenticado() == true) {
+                if (!Patente::autorizarOperacion("SUCURSALALTA")) {
+                    $codigo = "SUCURSALALTA";
+                    $mensaje = "No tiene permisos para la operación.";
+                    return view('sistema.pagina-error', compact('titulo', 'codigo', 'mensaje'));
+                } else {
+         
+                    $sucursal= new Sucursal();
+                    return view("sistema.sucursal-nuevo", compact("titulo", "sucursal")); //le digo que vaya a buscar el html blade
+         }
+            } else {
+                return redirect('admin/login');
+            }
 
       }
 
       public function index(){
         $titulo="Listado de sucursales";
-        return view("sistema.sucursal-listar", compact("titulo"));
+
+        if (Usuario::autenticado() == true) {
+            if (!Patente::autorizarOperacion("SUCURSALCONSULTA")) {
+                $codigo = "SUCURSALCONSULTA";
+                $mensaje = "No tiene permisos para la operación.";
+                return view('sistema.pagina-error', compact('titulo', 'codigo', 'mensaje'));
+            } else {
+                $sucursal = new Sucursal();
+                return view("sistema.sucursal-listar", compact("titulo")); }
+        } else {
+            return redirect('admin/login');
+        }
+
       }
 
       public function guardar(request $request) {
@@ -101,10 +127,56 @@ public function cargarGrilla(Request $request)
 
     public function editar($idsucursal){
         $titulo="Edición de sucursal";
-        $sucursal= new Sucursal();
-        $sucursal->obtenerPorId($idsucursal);
-        return view("sistema.sucursal-nuevo", compact("titulo","sucursal"));
+
+        if (Usuario::autenticado() == true) {
+            if (!Patente::autorizarOperacion("SUCURSALEDITAR")) {
+                $codigo = "SUCURSALEDITAR";
+                $mensaje = "No tiene permisos para la operación.";
+                return view('sistema.pagina-error', compact('titulo', 'codigo', 'mensaje'));
+            } else {
+
+                $sucursal= new Sucursal();
+                $sucursal->obtenerPorId($idsucursal);
+                return view("sistema.sucursal-nuevo", compact("titulo","sucursal")); }
+        } else {
+            return redirect('admin/login');
+        }
+
     }
+
+    public function eliminar(Request $request){
+       
+        if (Usuario::autenticado() == true) {
+            if (!Patente::autorizarOperacion("SUCURSALBAJA")) {
+                $resultado["err"] = EXIT_FAILURE;
+                $resultado["mensaje"] = "No tiene permisos para la operación";
+            } else {
+
+                $idSucursal = $request->input("id");
+                $sucursal = new Sucursal;
+
+                //si la Sucursal tiene un sucursal no elimina
+
+                if ($sucursal->existePedidoSucursal($idSucursal)) {
+                    $resultado["err"] = EXIT_FAILURE;
+                    $resultado["mensaje"] = "Sucursal con pedidos asignados.";
+                } else {
+
+                    //sino si
+                    $sucursal = new Sucursal;
+                    $sucursal->idsucursal = $idSucursal;
+                    $sucursal->eliminar();
+                    $resultado["err"] = EXIT_SUCCESS;
+                    $resultado["mensaje"] = "Registro eliminado exitosamente.";
+                }
+                return json_encode($resultado);
+            }
+        } else {
+            $resultado["err"] = EXIT_FAILURE;
+            $resultado["mensaje"] = "No tiene permisos para la operación";
+        }
+    }
+    
 }
 
 ?>

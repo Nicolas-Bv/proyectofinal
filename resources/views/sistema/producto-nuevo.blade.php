@@ -43,7 +43,7 @@
             <input type="hidden" id="id" name="id" class="form-control" value="{{$globalId}}" required>
             <div class="form-group col-lg-6">
                 <label>Nombre: *</label>
-                <input type="text" id="txtTitulo" name="txtTitulo" class="form-control" value="" required>
+                <input type="text" id="txtTitulo" name="txtTitulo" class="form-control" value="{{$producto->titulo}}" required>
             </div>
             <div class="form-group col-lg-6">
                 <label>Categoría: *</label>
@@ -58,11 +58,11 @@
         <div class="row">
             <div class="form-group col-lg-6">
                 <label>Cantidad: *</label>
-                <input type="text" id="txtCantidad" name="txtCantidad" class="form-control" value="" required>
+                <input type="text" id="txtCantidad" name="txtCantidad" class="form-control" value="{{$producto->cantidad}}"  required>
             </div>
             <div class="form-group col-lg-6">
                 <label>Precio: *</label>
-                <input type="text" id="txtPrecio" name="txtPrecio" class="form-control" required>
+                <input type="text" id="txtPrecio" name="txtPrecio" class="form-control" value="{{$producto->precio}}" required>
             </div>
         </div>
         <div class="row">
@@ -91,5 +91,29 @@
             msgShow("Corrija los errores e intente nuevamente.", "danger");
             return false;
         }
+    }
+
+       
+    function eliminar() {
+        $.ajax({
+            type: "GET",
+            url: "{{ asset('admin/producto/eliminar') }}",
+            data: {
+                id: globalId
+            },
+            async: true,
+            dataType: "json",
+            success: function(data) {
+                if (data.err = 0) {
+                    msgShow(data.mensaje, "success");
+                    $("#btnEnviar").hide();
+                    $("#btnEliminar").hide();
+                    $('#mdlEliminar').modal('toggle');
+                } else {
+                    msgShow(data.mensaje, "success");
+                    $('#mdlEliminar').modal('toggle');
+                }
+            }
+        });
     }
 </script>

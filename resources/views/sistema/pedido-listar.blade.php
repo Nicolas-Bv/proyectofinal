@@ -25,10 +25,10 @@ if (isset($msg)) {
     <thead>
         <tr>
             <th>Fecha</th>
+            <th>Total</th>
             <th>Sucursal</th>
             <th>Cliente</th>
             <th>Estado</th>
-            <th>Total</th>
         </tr>
     </thead>
 </table> 
