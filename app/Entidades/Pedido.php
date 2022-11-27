@@ -153,7 +153,7 @@ class Pedido extends Model
         return $this->idpedido = DB::getPdo()->lastInsertId();
     }
 
-    public function existePedidoCliente($idCliente)
+    public function existePedidoPorCliente($idCliente)
     {
 
         $sql = "SELECT
@@ -169,5 +169,23 @@ class Pedido extends Model
         return (count($lstRetorno) > 0);
        
       }
-   
+
+      public function existePedidoPorProducto($idProducto)
+      {
+  
+          $sql = "SELECT
+          fecha,
+          total,
+          fk_idsucursal,
+          fk_idestado,
+          fk_idcliente,
+          idpedido
+            FROM pedidos WHERE fk_idproducto = $idProducto";
+          $lstRetorno = DB::select($sql);
+  
+          return (count($lstRetorno) > 0);
+         
+        }
+
+      
 }

@@ -150,22 +150,7 @@ class Cliente extends Model
         return $lstRetorno;
     }
 
-    public function existePedidoProducto($idCliente)
-    {
-
-        $sql = "SELECT
-        fecha,
-        total,
-        fk_idsucursal,
-        fk_idestado,
-        fk_idcliente,
-        idpedido
-          FROM pedidos WHERE fk_idcliente = $idCliente";
-        $lstRetorno = DB::select($sql);
-
-        return (count($lstRetorno) > 0);
-       
-      }
+   
 
   
 }

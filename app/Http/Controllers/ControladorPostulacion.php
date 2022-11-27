@@ -13,8 +13,8 @@ Class ControladorPostulacion extends Controller
 
             $titulo= "Nueva postulacion";
             if (Usuario::autenticado() == true) {
-                if (!Patente::autorizarOperacion("POSTULACIONALTA")) {
-                    $codigo = "POSTULACIONALTA";
+                if (!Patente::autorizarOperacion("POSTULANTEALTA")) {
+                    $codigo = "POSTULANTEALTA";
                     $mensaje = "No tiene permisos para la operación.";
                     return view('sistema.pagina-error', compact('titulo', 'codigo', 'mensaje'));
                 } else {
@@ -32,8 +32,8 @@ Class ControladorPostulacion extends Controller
         $titulo="Listado de postulaciones";
         
         if (Usuario::autenticado() == true) {
-            if (!Patente::autorizarOperacion("POSTULACIONCONSULTA")) {
-                $codigo = "POSTULACIONCONSULTA";
+            if (!Patente::autorizarOperacion("POSTULANTECONSULTA")) {
+                $codigo = "POSTULANTECONSULTA";
                 $mensaje = "No tiene permisos para la operación.";
                 return view('sistema.pagina-error', compact('titulo', 'codigo', 'mensaje'));
             } else {
@@ -127,8 +127,8 @@ public function cargarGrilla(Request $request)
         $titulo="Edición de postulacion";
 
         if (Usuario::autenticado() == true) {
-            if (!Patente::autorizarOperacion("POSTULACIONEDITAR")) {
-                $codigo = "POSTULACIONEDITAR";
+            if (!Patente::autorizarOperacion("POSTULANTEEDITAR")) {
+                $codigo = "POSTULANTEEDITAR";
                 $mensaje = "No tiene permisos para la operación.";
                 return view('sistema.pagina-error', compact('titulo', 'codigo', 'mensaje'));
             } else {
@@ -145,8 +145,8 @@ public function cargarGrilla(Request $request)
 
     public function eliminar(Request $request){
         if (Usuario::autenticado() == true) {
-            if (!Patente::autorizarOperacion("POSTULACIONBAJA")) {
-                $codigo = "POSTULACIONBAJA";
+            if (!Patente::autorizarOperacion("POSTULANTEBAJA")) {
+                $codigo = "POSTULANTEBAJA";
                 $mensaje = "No tiene permisos para la operación.";
                 return view('sistema.pagina-error', compact('titulo', 'codigo', 'mensaje'));
             } else {

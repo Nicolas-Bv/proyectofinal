@@ -1,5 +1,5 @@
 @extends('plantilla')
-@section('titulo', "$titulo")
+@section('titulo', "Datos de la Patente")
 @section('scripts')
 <script>
     globalId = '<?php echo isset($patente->idpatente) && $patente->idpatente > 0 ? $patente->idpatente : 0; ?>';

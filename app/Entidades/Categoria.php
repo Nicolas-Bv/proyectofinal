@@ -105,4 +105,6 @@ class Categoria extends Model
       }
   
 
+      
+
 }

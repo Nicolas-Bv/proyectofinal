@@ -1,72 +1,87 @@
 <?php
 
 namespace App\Http\Controllers;
+
 use App\Entidades\Categoria;
-use App\Entidades\Pedido;
+use App\Entidades\Producto;
 use App\Entidades\Sistema\Patente;
 use App\Entidades\Sistema\Usuario;
 use Illuminate\Http\Request;
+
 require app_path() . '/start/constants.php';
 
-Class ControladorCategoria extends Controller
+class ControladorCategoria extends Controller
 {
-      public function nuevo(){
-
-            $titulo= "Nueva categoria";
-
-            
+    public function nuevo()
+    {
+        $titulo = "Nueva categoria";
         if (Usuario::autenticado() == true) {
             if (!Patente::autorizarOperacion("CATEGORIAALTA")) {
                 $codigo = "CATEGORIAALTA";
                 $mensaje = "No tiene permisos para la operación.";
                 return view('sistema.pagina-error', compact('titulo', 'codigo', 'mensaje'));
             } else {
-                $categoria= new Categoria();
+             
+                $categoria = new Categoria();
                 return view("sistema.categoria-nuevo", compact("titulo", "categoria")); //le digo que vaya a buscar el html blade
-     }
+            }
         } else {
             return redirect('admin/login');
         }
-        
-      }
+    }
 
-      public function index(){
-        $titulo="Listado de categorias";
-        return view("sistema.categoria-listar", compact("titulo"));
-      }
 
-      public function guardar(request $request) {
 
-      try{ 
+    public function index()
+    {
+        $titulo = "Listado de categorias";
+        if (Usuario::autenticado() == true) {
+            if (!Patente::autorizarOperacion("CATEGORIACONSULTA")) {
+                $codigo = "CATEGORIACONSULTA";
+                $mensaje = "No tiene permisos para la operación.";
+                return view('sistema.pagina-error', compact('titulo', 'codigo', 'mensaje'));
+            } else {
+
+                return view("sistema.categoria-listar", compact("titulo")); //le digo que vaya a buscar el html blade
+
+            }
+        } else {
+            return redirect('admin/login');
+        }
+    }
+
+    public function guardar(request $request)
+    {
+
+        try {
             //define la entidad del servicio
 
-            $titulo="Modificar categoria";
-            $entidad= new Categoria();
+            $titulo = "Modificar categoria";
+            $entidad = new Categoria();
             $entidad->cargarDesdeRequest($request);
 
             //validaciones
-            if($entidad->nombre == ""){   
-            $msg["ESTADO"] = MSG_ERROR;
-            $msg["MSG"] = "Complete todos los datos";
+            if ($entidad->nombre == "") {
+                $msg["ESTADO"] = MSG_ERROR;
+                $msg["MSG"] = "Complete todos los datos";
             } else {
-            if ($_POST["id"] > 0) {
-                //Es actualizacion
-                $entidad->guardar();
+                if ($_POST["id"] > 0) {
+                    //Es actualizacion
+                    $entidad->guardar();
 
-                $msg["ESTADO"] = MSG_SUCCESS;
-                $msg["MSG"] = OKINSERT;
-            } else {
-                //Es nuevo
-                $entidad->insertar();
+                    $msg["ESTADO"] = MSG_SUCCESS;
+                    $msg["MSG"] = OKINSERT;
+                } else {
+                    //Es nuevo
+                    $entidad->insertar();
 
-                $msg["ESTADO"] = MSG_SUCCESS;
-                $msg["MSG"] = OKINSERT;
+                    $msg["ESTADO"] = MSG_SUCCESS;
+                    $msg["MSG"] = OKINSERT;
+                }
+                $_POST["id"] = $entidad->idcategoria;
+                return view('sistema.categoria-listar', compact('titulo', 'msg'));
             }
-            $_POST["id"] = $entidad->idcategoria;
-            return view('sistema.categoria-listar', compact('titulo', 'msg'));
-
-           } 
-      } catch (Exception $e) {
+        } catch (Exception $e) {
             $msg["ESTADO"] = MSG_ERROR;
             $msg["MSG"] = ERRORINSERT;
         }
@@ -76,11 +91,9 @@ Class ControladorCategoria extends Controller
         $categoria->obtenerPorId($id);
 
         return view('sistema.categoria-nuevo', compact('msg', 'categoria', 'titulo')) . '?id=' . $categoria->idcategoria;
+    }
 
-      
-}
-
-public function cargarGrilla(Request $request)
+    public function cargarGrilla(Request $request)
     {
         $request = $_REQUEST;
 
@@ -96,7 +109,7 @@ public function cargarGrilla(Request $request)
 
         for ($i = $inicio; $i < count($aCategorias) && $cont < $registros_por_pagina; $i++) {
             $row = array();
-            $row[] = "<a href='/admin/categoria/" .$aCategorias[$i]->idcategoria."'>" .$aCategorias[$i]->nombre. "</a>";
+            $row[] = "<a href='/admin/categoria/" . $aCategorias[$i]->idcategoria . "'>" . $aCategorias[$i]->nombre . "</a>";
             $cont++;
             $data[] = $row;
         }
@@ -110,12 +123,25 @@ public function cargarGrilla(Request $request)
         return json_encode($json_data);
     }
 
-    public function editar($idcategoria){
-        $titulo="Edición de categoria";
-        $categoria= new Categoria();
-        $categoria->obtenerPorId($idcategoria);
-        return view("sistema.categoria-nuevo", compact("titulo","categoria"));
+    public function editar($idCategoria)
+    {
+        $titulo = "Edición de categoria";
+
+        if (Usuario::autenticado() == true) {
+            if (!Patente::autorizarOperacion("CLIENTEEDITAR")) {
+                $codigo = "CATEGORIAEDITAR";
+                $mensaje = "No tiene permisos para la operación.";
+                return view('sistema.pagina-error', compact('titulo', 'codigo', 'mensaje'));
+            } else {
+                $categoria = new Categoria();
+                $categoria->obtenerPorId($idCategoria);
+                return view("sistema.categoria-nuevo", compact("titulo", "categoria"));
+            }
+        } else {
+            return redirect('admin/login');
+        }
     }
+
 
     public function eliminar(Request $request)
     {
@@ -127,13 +153,13 @@ public function cargarGrilla(Request $request)
             } else {
 
                 $idCategoria = $request->input("id");
-                $pedido = new Pedido;
+                $producto = new Producto();
 
-                //si el Categoria tiene un pedido no elimina
+                //si el Categoria tiene un produc no elimina
 
-                if ($pedido->existePedidoCategoria($idCategoria)) {
+                if ($producto->existeProductoPorCategoria($idCategoria)) {
                     $resultado["err"] = EXIT_FAILURE;
-                    $resultado["mensaje"] = "Categoria con pedidos asignados.";
+                    $resultado["mensaje"] = "Categoria con productos asignados.";
                 } else {
 
                     //sino si
@@ -143,11 +169,11 @@ public function cargarGrilla(Request $request)
                     $resultado["err"] = EXIT_SUCCESS;
                     $resultado["mensaje"] = "Registro eliminado exitosamente.";
                 }
-                return json_encode($resultado);
             }
         } else {
             $resultado["err"] = EXIT_FAILURE;
-            $resultado["mensaje"] = "No tiene permisos para la operación";
+            $resultado["mensaje"] = "Usuario no autenticado";
         }
+        return json_encode($resultado);
     }
 }

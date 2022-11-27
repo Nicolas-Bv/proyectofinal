@@ -30,20 +30,22 @@
 @endsection
 
 @section("contenido")
-<div class="panel-body">
-    <div id="msg"></div>
-    <?php
+<?php
     if (isset($msg)) {
         echo '<script>msgShow("' . $msg["MSG"] . '", "' . $msg["ESTADO"] . '")</script>';
     }
     ?>
+      <div id="msg"></div>
+<div class="panel-body">
+  
+   
     <form id="form1" method="POST">
         <div class="row">
             <input type="hidden" name="_token" value="{{ csrf_token() }}"></input>
             <input type="hidden" id="id" name="id" class="form-control" value="{{$globalId}}" required>
             <div class="form-group col-lg-6">
                 <label>Nombre: *</label>
-                <input type="text" id="txtNombre" name="txtNombre" class="form-control" value="" required>
+                <input type="text" id="txtNombre" name="txtNombre" class="form-control" value="{{$categoria->nombre}}" required>
             </div>
         </div>
     </form>
@@ -63,6 +65,30 @@
             msgShow("Corrija los errores e intente nuevamente.", "danger");
             return false;
         }
+    }
+
+        
+    function eliminar() {
+        $.ajax({
+            type: "GET",
+            url: "{{ asset('admin/categoria/eliminar') }}",
+            data: {
+                id: globalId
+            },
+            async: true,
+            dataType: "json",
+            success: function(data) {
+                if (data.err == 0) {
+                    msgShow(data.mensaje, "success");
+                    $("#btnEnviar").hide();
+                    $("#btnEliminar").hide();
+                    $('#mdlEliminar').modal('toggle');
+                } else {
+                    msgShow(data.mensaje, "danger");
+                    $('#mdlEliminar').modal('toggle');
+                }
+            }
+        });
     }
 </script>
 @endsection

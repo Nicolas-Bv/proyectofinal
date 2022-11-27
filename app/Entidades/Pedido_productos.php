@@ -12,7 +12,7 @@ class PedidoProducto extends Model
     public $timestamps = false;
 
     protected $fillable = [
-        'idpedidoproductos', 'fk_idproducto', 'fk_idpedido'
+        'idpedidoproductos', 'fk_idproducto', 'fk_idpedido', 'precio_unitario', 'cantidad', 'total'
     ];
 
 
@@ -24,7 +24,10 @@ class PedidoProducto extends Model
         $sql = "SELECT
                   fk_idproducto,
                   fk_idpedido,
-                  idpedidoproducto
+                  idpedidoproducto,
+                  cantidad,
+                  precio_unitario,
+                  total
               FROM pedido_productos ORDER BY idpedidoproducto ASC";
         $lstRetorno = DB::select($sql);
         return $lstRetorno;
@@ -35,7 +38,10 @@ class PedidoProducto extends Model
         $sql = "SELECT
                   fk_idproducto,
                   fk_idpedido,
-                  idpedidoproducto
+                  idpedidoproducto,
+                  cantidad,
+                  precio_unitario,
+                  total
                   FROM pedido_productos WHERE idpedidoproducto = $idPedidoProducto";
         $lstRetorno = DB::select($sql);
 
@@ -51,11 +57,13 @@ class PedidoProducto extends Model
     public function guardar()
     {
         $sql = "UPDATE pedido_productos SET
-              fk_idpedido=$this->fk_idpedido,
+              fk_idpedido=$this->fk_idpedidos,
               fk_idproducto=$this->fk_idproducto,
-              idpedidoproducto=$this->idpedidoproducto
-              WHERE idpedidoproducto=?";
-        $affected = DB::update($sql, [$this->idpedidoproducto]);
+              precio_unitario=$this->precio_unitario,
+              total=$this->total,
+              cantidad=$this->cantidad
+              WHERE idcliente=?";
+        $affected = DB::update($sql, [$this->idcliente]);
     }
 
     public function eliminar()
@@ -70,14 +78,49 @@ class PedidoProducto extends Model
         $sql = "INSERT INTO pedido_productos (
                 fk_idpedido,
                 fk_idproducto,
-                idpedidoproducto
+                cantidad,
+                precio_unitario,
+                total
               ) VALUES (?, ?, ?, ?, ?);";
         $result = DB::insert($sql, [
             $this->fk_idpedido,
             $this->idpedidoproducto,
-            $this->fk_idproducto
+            $this->cantidad,
+            $this->precio_unitario,
+            $this->total
         ]);
         return $this->idpedidoproducto = DB::getPdo()->lastInsertId();
+    }
+
+
+    public function obtenerFiltrado()
+    {
+        $request = $_REQUEST;
+        $columns = array(
+            0 => 'cantidad',
+            1 => 'precio_unitario',
+            2 => 'total',
+        
+        );
+        $sql = "SELECT DISTINCT
+                idpedidoproducto,
+                cantidad,
+                precio_unitario,
+                total
+              FROM pedido_productos
+                WHERE 1=1
+                ";
+
+        //Realiza el filtrado
+        if (!empty($request['search']['value'])) {
+            $sql .= " AND ( cantidad LIKE '%" . $request['search']['value'] . "%' ";
+            $sql .= " OR precio_unitario LIKE '%" . $request['search']['value'] . "%' ";
+            $sql .= " OR total LIKE '%" . $request['search']['value'] . "%' ";        }
+        $sql .= " ORDER BY " . $columns[$request['order'][0]['column']] . "   " . $request['order'][0]['dir'];
+
+        $lstRetorno = DB::select($sql);
+
+        return $lstRetorno;
     }
 
 }

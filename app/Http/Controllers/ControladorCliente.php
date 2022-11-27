@@ -158,7 +158,7 @@ class ControladorCliente extends Controller
 
                 //si el cliente tiene un pedido no elimina
 
-                if ($pedido->existePedidoCliente($idCliente)) {
+                if ($pedido->existePedidoPorCliente($idCliente)) {
                     $resultado["err"] = EXIT_FAILURE;
                     $resultado["mensaje"] = "Cliente con pedidos asignados.";
                 } else {
@@ -170,11 +170,12 @@ class ControladorCliente extends Controller
                     $resultado["err"] = EXIT_SUCCESS;
                     $resultado["mensaje"] = "Registro eliminado exitosamente.";
                 }
-                return json_encode($resultado);
+               
             }
         } else {
             $resultado["err"] = EXIT_FAILURE;
             $resultado["mensaje"] = "No tiene permisos para la operación";
         }
+        return json_encode($resultado);
     }
 };

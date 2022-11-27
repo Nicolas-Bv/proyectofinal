@@ -99,13 +99,13 @@
             async: true,
             dataType: "json",
             success: function(data) {
-                if (data.err = 0) {
+                if (data.err == 0) {
                     msgShow(data.mensaje, "success");
                     $("#btnEnviar").hide();
                     $("#btnEliminar").hide();
                     $('#mdlEliminar').modal('toggle');
                 } else {
-                    msgShow(data.mensaje, "success");
+                    msgShow(data.mensaje, "danger");
                     $('#mdlEliminar').modal('toggle');
                 }
             }

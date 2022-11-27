@@ -155,10 +155,24 @@ public function obtenerPorId($idproducto)
 
         return $lstRetorno;
     }
-
     
-  
+    public function existeProductoPorCategoria($idCategoria)
+    {
 
+      $sql = "SELECT
+              titulo,
+              cantidad,
+              precio,
+              descripcion,
+              idproducto,
+              fk_idcategoria
+        FROM productos WHERE fk_idcategoria = $idCategoria";
+      $lstRetorno = DB::select($sql);
+
+        return (count($lstRetorno) > 0);
+       
+      }
+  
 
 }
 
